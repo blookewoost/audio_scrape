@@ -27,11 +27,11 @@ class Playlist:
             if filename in os.listdir(self.folder):
                 print("A copy of {} already exists on disk, skipping it.".format(filename))
             else:
-                stream = self.get_audio(video)
+                stream = self.stream_select(video)
                 stream.download(output_path=self.folder + '/' + filename)
     
     '''
-    FIXME dynamically select the highest quality audio stream. Currently we assume a 160kbps stream exists.
+    This method is no longer in use.
     '''
     def get_audio(self, video):
 
@@ -47,6 +47,21 @@ class Playlist:
             return s
         else:
             raise Exception("No high quality audio streams were found for video: {}".format(video.video_object.title))
+
+    def stream_select(self, video):
+
+        streams = video.video_object.streams.filter(only_audio=True)
+        quality = []
+
+        # Filter the available audio streams
+        for stream in streams:
+            quality.append(int(stream.abr.removesuffix('kbps')))
+
+        hq = max(quality)
+        idx = quality.index(hq)
+
+        return streams[idx]
+            
 
         
         

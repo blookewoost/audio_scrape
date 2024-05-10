@@ -1,6 +1,6 @@
 import pytube
-import pafy
 import os
+from tkinter import filedialog
 from Video import Video
 
 class Playlist:
@@ -9,20 +9,17 @@ class Playlist:
         self.name = _name
         self.playlist_object = pytube.Playlist(self.url)
         self.collect_videos()
-        self.create_folder()
+        self.select_folder()
         self.save_audio()
 
     def collect_videos(self):
         self.videos = []
         for url in self.playlist_object.video_urls:
             self.videos.append(Video(url))
-            
-    def create_folder(self):
-        self.folder = './' + self.name
-        if not os.path.exists(self.folder):
-            os.makedirs(self.folder)
-        else:
-            print("The folder for this playlist already exists.")
+
+    def select_folder(self):
+        sdir = filedialog.askdirectory()
+        self.folder = sdir
 
     def save_audio(self):
         for video in self.videos:

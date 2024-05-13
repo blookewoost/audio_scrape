@@ -21,14 +21,35 @@ class Playlist:
         sdir = filedialog.askdirectory()
         self.folder = sdir
 
+
     def save_audio(self):
+
         for video in self.videos:
             filename = video.title + ".mp3"
+            filename = self.filename_correction(filename)
+
             if filename in os.listdir(self.folder):
                 print("A copy of {} already exists on disk, skipping it.".format(filename))
             else:
                 stream = self.stream_select(video)
                 stream.download(output_path=self.folder + '/' + filename)
+
+    '''
+    Convert the video title into an acceptable filename for the .mp3
+    '''
+    def filename_correction(self, filename):
+        
+        invalid_chars = '<>:"/\\|?*'
+        new_filename = []
+
+        for char in filename:
+            if char in invalid_chars:
+                new_filename.append('_')  # Replace invalid character with underscore
+            else:
+                new_filename.append(char)
+
+        new_filename = ''.join(new_filename)
+        return new_filename
     
     '''
     This method is no longer in use.
